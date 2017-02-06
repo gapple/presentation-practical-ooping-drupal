@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * @file
+ * Contains ga.module.
+ */
+
+use Drupal\ga\AnalyticsEvents;
+use Drupal\ga\Event\CollectEvent;
+
+/**
+ * Implements hook_page_attachments().
+ */
+function ga_page_attachments(array &$attachments) {
+
+  /** @var CollectEvent $event */
+  $event = \Drupal::service('event_dispatcher')
+    ->dispatch(AnalyticsEvents::COLLECT, new CollectEvent());
+
+  $attachments['#attached']['library'][] = 'ga/analytics';
+  $attachments['#attached']['drupalSettings']['ga']['commands'] = $event->getDrupalSettingCommands();
+}

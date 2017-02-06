@@ -1,0 +1,6 @@
+services:
+  ga.default_command_subscriber:
+    class: Drupal\ga\EventSubscriber\DefaultCommandSubscriber
+    arguments: ['@config.factory', '@current_user', '@entity_type.manager']
+    tags:
+      - { name: event_subscriber }
