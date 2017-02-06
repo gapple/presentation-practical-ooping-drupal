@@ -32,12 +32,10 @@
   text-transform: none;
 }
 
-#about {
 
-}
 #about aside {
   color: #000;
-  padding: 1em 0.75em 1.5em;
+  padding: 30px 30px;
   float: right;
   background-color: rgba(255, 255, 255, .8);
   font-size: 1em;
@@ -48,14 +46,56 @@
 #about aside ul {
   display: block;
   list-style: none;
-  margin: 0;
   text-align: center;
-  margin-top: 1em;
+  margin: 20px 0 0;
 }
-#about aside .subtle {
-  color: rgba(0,0,0, 0.6);
+#about a {
+  color: rgb(51, 51, 51);
 }
-#about aside .projects {
+@supports (not (text-decoration-color: rgba(51, 51, 51, 0.1))) {
+  #about .accounts a .fa + span,
+  #about .projects a {
+    border-bottom: 1px solid rgba(51, 51, 51, 0.1);
+  }
+  #about .accounts a:hover .fa + span,
+  #about .projects a:hover {
+    border-bottom: 1px solid rgba(51, 51, 51, 0.65);
+  }
+  #about .accounts .drupal .fa+span {
+    width: 6ex;
+    margin-right: 2ex;
+  }
+}
+@supports (text-decoration-color: rgba(51, 51, 51, 0.1)) {
+  #about .accounts a .fa + span,
+  #about .projects a {
+    text-decoration: underline rgba(51, 51, 51, 0.1);
+  }
+  #about .accounts a:hover .fa + span,
+  #about .projects a:hover {
+    text-decoration: underline rgba(51, 51, 51, 0.65);
+  }
+}
+#about .accounts a {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+}
+#about .accounts .fa {
+  margin-right: 0.25ex;
+  width: 1.8ex;
+}
+#about .accounts .fa+span {
+  width: 8ex;
+  text-align: left;
+}
+#about .fa-drupal {
+  color: #0678be;
+}
+#about .fa-twitter {
+  color: #1DA1F2;
+}
+#about .projects {
   font-size: 0.8em;
 }
 
