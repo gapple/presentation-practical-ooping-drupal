@@ -56,17 +56,17 @@ class DefaultCommandSubscriber implements EventSubscriberInterface {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    *   The config factory service.
-   * @param \Drupal\ga\CommandRegistryService $commandRegistry
-   *   The command registry service.
+   * @param \Drupal\Core\Session\AccountInterface $currentUser
+   *   The current user service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The Entity Type Manager Service.
    */
   public function __construct(
     ConfigFactoryInterface $configFactory,
-    CommandRegistryService $commandRegistry,
     AccountInterface $currentUser,
     EntityTypeManagerInterface $entityTypeManager
   ) {
     $this->configFactory = $configFactory;
-    $this->commandRegistry = $commandRegistry;
     $this->currentUser = $currentUser;
     $this->userStorage = $entityTypeManager->getStorage('user');
   }
