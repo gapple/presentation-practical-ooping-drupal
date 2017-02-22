@@ -30,38 +30,993 @@
 <body>
 <div class="reveal">
   <div class="slides">
-    <section id="title"
-             data-transition="fade">
-      <h2>A Practical Introduction to</h2>
-      <h1>OOPing in Drupal</h1>
-      <h3>Geoff Appleby</h3>
-      <h4>Pacific Northwest Drupal Summit 2017</h4>
+    <section>
+      <section id="title"
+               class="center"
+               data-transition="fade">
+        <h2>A Practical Introduction to</h2>
+        <h1>OOPing in Drupal</h1>
+        <h3>Geoff Appleby</h3>
+        <h4>Pacific Northwest Drupal Summit 2017</h4>
+      </section>
+      <section id="about"
+               class="center"
+               data-background-image="images/eaglebluffs.jpg"
+               data-transition="slide">
+        <aside>
+          <h2>Geoff Appleby</h2>
+          <ul class="accounts">
+            <li class="drupal"><a href="https://www.drupal.org/u/gapple"><i class="fa fa-drupal"></i> <span>gapple</span></a></li>
+            <li class="twitter"><a href="https://twitter.com/gappleca"><i class="fa fa-twitter"></i> <span>gappleca</span></a></li>
+          </ul>
+          <ul class="projects">
+            <li><a href="https://www.drupal.org/project/gacsp">gacsp: Google Analytics</a></li>
+            <li><a href="https://www.drupal.org/project/persistent_login">Persistent Login</a></li>
+            <li><a href="https://drupalreleasedate.com">DrupalReleaseDate.com</a></li>
+          </ul>
+        </aside>
+      </section>
+      <section id="myplanet"
+               class="center"
+               data-background="#ed5b33"
+               data-transition="fade">
+        <img class="logo" src="images/myplanet-logo.png"/>
+        <div class="locations">
+          <img src="images/myplanet-vancouver.png"/>
+          <img src="images/myplanet-toronto.png"/>
+          <img src="images/myplanet-cherniv.png"/>
+        </div>
+      </section>
     </section>
-    <section id="about"
-             data-background="images/eaglebluffs.jpg"
-             data-transition="slide-in slide-reverse-out">
-      <aside>
-        <h2>Geoff Appleby</h2>
-        <ul class="accounts">
-          <li class="drupal"><a href="https://www.drupal.org/u/gapple"><i class="fa fa-drupal"></i> <span>gapple</span></a></li>
-          <li class="twitter"><a href="https://twitter.com/gappleca"><i class="fa fa-twitter"></i> <span>gappleca</span></a></li>
-        </ul>
-        <ul class="projects">
-          <li><a href="https://www.drupal.org/project/gacsp">gacsp: Google Analytics</a></li>
-          <li><a href="https://www.drupal.org/project/persistent_login">Persistent Login</a></li>
-          <li><a href="https://drupalreleasedate.com">DrupalReleaseDate.com</a></li>
-        </ul>
-      </aside>
+
+    <section id="background">
+      <section data-background-image="images/module_page_google_analytics.png">
+
+        <aside class="notes" data-markdown>
+          We're going to rebuild a module
+        </aside>
+      </section>
+      <section data-background-image="images/module_page_gacsp.png">
+
+        <aside class="notes" data-markdown>
+          But really re-rebuild a module, because it's easier when I've already
+          built it.
+          This version will be a little different, and a bit simpler, because
+          it won't have to fix all my original mistakes.
+        </aside>
+      </section>
     </section>
-    <section id="myplanet"
-             data-background="#ed5b33"
-             data-transition="fade">
-      <img class="logo" src="images/myplanet-logo.png"/>
-      <div class="locations">
-        <img src="images/myplanet-vancouver.png"/>
-        <img src="images/myplanet-toronto.png"/>
-        <img src="images/myplanet-cherniv.png"/>
-      </div>
+
+    <!-- Boilerplate -->
+    <section>
+      <section data-background="images/yaml_everywhere.jpg"></section>
+      <section>
+        <h2>Boilerplate</h2>
+        <ul class="paths">
+          <li>ga.info.yml</li>
+          <li>ga.routing.yml</li>
+          <li>ga.links.menu.yml</li>
+          <li>ga.libraries.yml</li>
+          <li>ga.services.yml</li>
+          <li>config/install/ga.settings.yml</li>
+          <li>config/schema/ga.schema.yml</li>
+        </ul>
+      </section>
+      <section id="drupal-console">
+        <h2>Drupal Console</h2>
+        <img class="logo" data-src="images/drupal-console.png"/>
+        <a href="https://drupalconsole.com">DrupalConsole.com</a>
+      </section>
+    </section>
+
+    <!-- Google Analytics / Javascript -->
+    <section>
+      <section data-background-image="images/analytics_docs.png">
+
+        <aside class="notes" data-markdown>
+          The core
+        </aside></section>
+      <section>
+        <h2>Google Analytics Command Queue</h2>
+
+        <pre><code class="lang-js">
+          ga('create', 'UA-12345678-1');
+          ga('set', 'dimension1', 'value');
+          ga('send', 'pageview');
+        </code></pre>
+
+        <aside class="notes" data-markdown>
+          Commands operate through a single global function, and either set
+          configuration or send information.
+
+          To bridge PHP on the server side and JS, this doesn't work very well.
+          Google Analytics creates the JS by concatenating strings and inserting
+          inline.
+        </aside>
+      </section>
+      <section>
+        <h2>Google Analytics Command Queue</h2>
+
+        <pre><code class="lang-js">
+          ga.apply(null, ['create', 'UA-12345678-1']);
+          ga.apply(null, ['set', 'dimension1', 'value']);
+          ga.apply(null, ['send', 'pageview']);
+        </code></pre>
+
+        <aside class="notes" data-markdown>
+          The `apply` method allows us to send arbitrary arguments to a function,
+          like PHP's `call_user_func_array()`
+        </aside>
+      </section>
+      <section>
+        <h2>Google Analytics Command Queue</h2>
+
+        <pre><code class="lang-js">
+          var commands = [
+            ['create', 'UA-12345678-1'],
+            ['set', 'dimension1', 'value'],
+            ['send', 'pageview'],
+          ];
+
+          for (var i = 0; i < commands.length; i++) {
+            ga.apply(null, commands[i]);
+          }
+        </code></pre>
+
+        <aside class="notes" data-markdown>
+          Instead of a hard-coded array, these commands can be provided through
+          `drupalSettings`
+        </aside>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-js">
+            (function (drupalSettings) {
+              'use strict';
+
+              window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+
+              for (var i = 0; i < drupalSettings.ga.commands.length; i++) {
+                ga.apply(null, drupalSettings.ga.commands[i]);
+              }
+
+            })(drupalSettings);
+          </code></pre>
+          <figcaption class="path">/js/analytics.js</figcaption>
+        </figure>
+      </section>
+      <section id="libraries-yml">
+        <figure class="code">
+          <pre><code class="lang-yml">
+            analytics:
+              version: 8001
+              js:
+                js/analytics.js: {}
+                https://www.google-analytics.com/analytics.js: {type: external, attributes: { async: true } }
+              dependencies:
+               - core/drupalSettings
+          </code></pre>
+          <figcaption class="path">/ga.libraries.yml</figcaption>
+        </figure>
+
+      </section>
+    </section>
+
+    <!-- Theory -->
+    <!--<section>-->
+      <!--<section id="data-heart-code" class="center">-->
+        <!--<h1>data <span class="emoji">&#x1F496;</span> code</h1>-->
+      <!--</section>-->
+    <!--</section>-->
+
+    <!-- Namespaces & Autoloading -->
+    <section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            <mark class="fragment highlight">namespace Drupal\ga\AnalyticsCommand;</mark>
+
+            class Create {
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Create.php</figcaption>
+        </figure>
+      </section>
+      <section id="namespace-path">
+        <h2>Namespaces & Autoloading</h2>
+        <code class="namespace"><mark class="fragment highlight-current" data-fragment-index="1">Drupal</mark>\<mark class="fragment highlight-current" data-fragment-index="2">ga</mark>\<mark class="fragment highlight-current" data-fragment-index="3">AnalyticsCommand</mark>\<mark class="fragment highlight-current" data-fragment-index="4">Create</mark></code>
+        <code class="path fragment" data-fragment-index="3">/src/<mark class="fragment highlight-current" data-fragment-index="3">AnalyticsCommand</mark>/<mark class="fragment highlight-current" data-fragment-index="4">Create</mark>.php</code>
+      </section>
+      <section>
+        <h2>Namespaces & Autoloading</h2>
+        <ul class="paths">
+          <li>ga.info.yml</li>
+          <li>ga.module</li>
+          <li>src/
+            <ul>
+              <li>AnalyticsCommand/
+                <ul>
+                  <li>Create.php</li>
+                  <li>Set.php</li>
+                  <li>Send.php</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </section>
+    </section>
+
+    <!-- Visibility -->
+    <section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class Create {
+
+              <mark class="fragment highlight">protected</mark> $trackingId;
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Create.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <h2>Visibility</h2>
+        <ul>
+          <li>private</li>
+          <li>protected</li>
+          <li>public</li>
+        </ul>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class Create {
+
+              protected $trackingId;
+
+              public function <mark class="fragment highlight highlight-current">__create</mark>($trackingId) {
+                <mark class="fragment highlight highlight-current">$this</mark>->trackingId = $trackingId;
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Create.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class Create {
+
+              protected $trackingId;
+
+              public function __create($trackingId) {
+                $this->trackingId = $trackingId;
+              }
+
+              public function getSettingCommand() {
+                return ['create', $this->trackingId];
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Create.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+
+            $createInstance = <mark class="fragment highlight-current">new</mark> \Drupal\ga\AnalyticsCommand\Create('UA-12345678-1');
+
+            print_r($createInstance->getSettingCommand());
+            //Array
+            //(
+            //    [0] => create
+            //    [1] => UA-12345678-1
+            //)
+          </code></pre>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            <mark class="highlight">use</mark> \Drupal\ga\AnalyticsCommand\Create;
+
+            $createInstance = new Create('UA-12345678-1');
+
+            print_r($createInstance->getSettingCommand());
+            //Array
+            //(
+            //    [0] => create
+            //    [1] => UA-12345678-1
+            //)
+          </code></pre>
+        </figure>
+      </section>
+    </section>
+    <!-- Introduce traits before inheritance / interfaces? -->
+
+    <!-- Inheritance -->
+    <section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class Send {
+
+              protected $hitType;
+
+              public function __construct($hitType) {
+                $this->hitType = $hitType;
+              }
+
+              public function getSettingCommand() {
+                return ['send', $this->hitType];
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Send.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class Pageview <mark class="fragment highlight">extends</mark> Send {
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Pageview.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class Pageview extends Send {
+
+              public function __construct() {
+                <mark class="fragment highlight">parent::</mark>__construct('pageview');
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Pageview.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            use Drupal\ga\AnalyticsCommand\Pageview;
+
+            $pageviewInstance = new Pageview();
+
+            print_r($pageviewInstance->getSettingCommand());
+            //Array
+            //(
+            //    [0] => send
+            //    [1] => pageview
+            //)
+          </code></pre>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class Set {
+
+              protected $settingKey;
+              protected $settingValue;
+
+              public function __construct($settingKey, $settingValue) {
+                $this->settingKey = $settingKey;
+                $this->settingValue = $settingValue;
+              }
+
+              public function getSettingCommand() {
+                return ['set', $this->settingKey, $this->settingValue];
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Set.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class SetDimension extends Set {
+
+              public function __construct($index, $value) {
+                parent::__construct('dimension' . $index, $value);
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/SetDimension.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class SetMetric extends Set {
+
+              public function __construct($index, $value) {
+                parent::__construct('metric' . $index, $value);
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/SetMetric.php</figcaption>
+        </figure>
+      </section>
+    </section>
+
+    <!-- Interfaces -->
+    <section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            <mark class="fragment highlight-current">interface</mark> SettingItemInterface {
+
+              public function getSettingCommand<mark class="fragment highlight-current">();</mark>
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/SettingItemInterface.php</figcaption>
+        </figure>
+
+        <aside class="notes">
+          Interfaces define how to interact with a class, but not how it's done
+        </aside>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class Send <mark class="highlight">implements</mark> SettingItemInterface {
+
+              protected $hitType;
+
+              public function __construct($hitType) {
+                $this->hitType = $hitType;
+              }
+
+              public function getSettingCommand() {
+                return ['send', $this->hitType];
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Send.php</figcaption>
+        </figure>
+
+        <aside class="notes">
+          Interface is only declared on parent classes; children inherit
+          interfaces as well.
+
+          `extends` and `implements` can both be set on a class if child
+          implements interface that parent doesn't.
+
+          `implements` can have multiple values separated by commas.
+        </aside>
+      </section>
+    </section>
+
+    <!-- Traits -->
+    <section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            interface SettingItemInterface {
+
+              public function getSettingCommand();
+
+              <mark>public function getPriority();</mark>
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/SettingItemInterface.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            class Create implements SettingItemInterface {
+
+              protected $trackingId;
+              protected $priority;
+
+              public function __construct($trackingId, $priority) {
+                $this->trackingId = $trackingId;
+                $this->priority = $priority;
+              }
+
+              public function getSettingCommand() {
+                return ['create', $this->trackingId];
+              }
+
+              public function getPriority() {
+                return $this->priority;
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Create.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
+
+            <mark>trait</mark> PrioritizedTrait {
+
+              protected $priority;
+
+              public function getPriority() {
+                return $this->priority;
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/PrioritizedTrait.php</figcaption>
+        </figure>
+
+        <aside class="notes">
+          Traits are opposite of interfaces; define implementation but don't
+          enforce behaviour.
+
+          Frequently come in a pairs, where Trait defines default Interface
+          implementation.
+        </aside>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\gap\AnalyticsCommand;
+
+            class Create implements SettingItemInterface {
+
+              <mark>use PrioritizedTrait;</mark>
+
+              protected $trackingId;
+
+              public function __construct($trackingId, $priority) {
+                $this->trackingId = $trackingId;
+                $this->priority = $priority;
+              }
+
+              public function getSettingCommand() {
+                return ['create', $this->trackingId];
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Create.php</figcaption>
+        </figure>
+      </section>
+    </section>
+
+    <!-- Statics & Constants-->
+    <section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\gap\AnalyticsCommand;
+
+            class Create implements SettingItemInterface {
+
+              use PrioritizedTrait;
+
+              <mark>const</mark> DEFAULT_PRIORITY = 300;
+
+              protected $trackingId;
+
+              public function __construct($trackingId, $priority = <mark class="fragment highlight-current">static::</mark>DEFAULT_PRIORITY) {
+                $this->trackingId = $trackingId;
+                $this->priority = $priority;
+              }
+
+              public function getSettingCommand() {
+                return ['create', $this->trackingId];
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/Create.php</figcaption>
+        </figure>
+        <aside class="notes">
+          Constants are unchangeable data that belongs to the class.
+
+          `self` keyword allows a quick reference to the current class.
+            Always references the class in which the code was written.
+          `static` is probably the usually expected behaviour, where the class
+            of the object itself is used.
+
+          Instead of arrow operator, constants are accessed via double-colon.
+
+          PHP 7.1 introduced visibility modifiers on constants, but prior they are always public.
+        </aside>
+      </section>
+    </section>
+
+    <!-- Events -->
+    <section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\Event;
+
+            use Drupal\ga\AnalyticsCommand\SettingItemInterface;
+            use Symfony\Component\EventDispatcher\Event;
+
+            class CollectEvent extends Event {
+
+              protected $commands;
+
+              public function __construct() {
+                $this->commands = [];
+              }
+
+              public function addCommand(<mark class="fragment highlight">SettingItemInterface</mark> $item) {
+                $this->commands[] = $item;
+              }
+
+              public function getDrupalSettingCommands() {
+                usort(
+                  $this->commands,
+                  function ($a, $b) {
+                    return $b->getPriority() - $a->getPriority();
+                  }
+                );
+
+                return array_map(
+                  function ($item) {
+                    return $item->getSettingCommand()
+                  },
+                  $this->commands
+                );
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/Event/CollectEvent.php</figcaption>
+        </figure>
+
+        <aside class="notes">
+          Type Hinting
+          (Finally making use of interface here)
+
+          Why are events better than a hooks?
+
+          Code organization; can break functionality into multiple methods more
+          easily than pseudo-private functions.
+
+          Loophole needed to provide more arguments to hooks (references within array).
+
+          More descriptive / multiple points of integration
+          Type hinting ensures correct data provided
+        </aside>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            use Drupal\ga\Event\CollectEvent;
+
+            /**
+             * Implements hook_page_attachments().
+             */
+            function ga_page_attachments(array &$attachments) {
+
+              $event = <mark class="fragment highlight-current">\Drupal::service</mark>('event_dispatcher')
+                ->dispatch(<mark class="fragment highlight-current">'ga.collect'</mark>, new CollectEvent());
+
+              $attachments['#attached']['library'][] = 'ga/analytics';
+              $attachments['#attached']['drupalSettings']['ga']['commands'] =
+                $event->getDrupalSettingCommands();
+            }
+          </code></pre>
+          <figcaption class="path">/ga.module</figcaption>
+        </figure>
+
+        <aside class="notes">
+          Static class `Drupal`
+
+          Event name (naming convention / module namespace)
+        </aside>
+      </section>
+    </section>
+
+    <!-- Event Subscriber Service -->
+    <section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\EventSubscriber;
+
+            use Drupal\Core\Config\ConfigFactoryInterface;
+            use Drupal\ga\AnalyticsCommand\Create;
+            use Drupal\ga\AnalyticsCommand\Pageview;
+            use Drupal\ga\Event\CollectEvent;
+            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+            class DefaultCommandSubscriber implements EventSubscriberInterface {
+
+              protected $configFactory;
+
+              public <mark class="fragment highlight-current">static</mark> function getSubscribedEvents() {
+                return [
+                  'ga.collect' => [
+                    ['onCollectDefaultCommands'],
+                  ],
+                ];
+              }
+
+              public function __construct(<mark class="fragment highlight-current">ConfigFactoryInterface $configFactory</mark>) {
+                $this->configFactory = $configFactory;
+              }
+
+              public function onCollectDefaultCommands(CollectEvent $event) {
+                $config = $this->configFactory->get('ga.settings');
+                $event->addCommand(new Create($config->get('tracking_id')));
+                $event->addCommand(new Pageview());
+              }
+
+            }
+
+          </code></pre>
+          <figcaption class="path">/src/EventSubscriber/DefaultCommandSubscriber.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-yml">
+            services:
+              ga.default_command_subscriber:
+                class: Drupal\ga\EventSubscriber\DefaultCommandSubscriber
+                arguments: ['@config.factory']
+                tags:
+                  - { name: event_subscriber }
+          </code></pre>
+          <figcaption class="path">/ga.services.yml</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\my_module\EventSubscriber;
+
+            use Drupal\Core\Routing\RouteMatchInterface;
+            use Drupal\ga\AnalyticsCommand\SetDimension;
+            use Drupal\ga\Event\CollectEvent;
+            use Drupal\node\NodeInterface;
+            use Drupal\taxonomy\TermInterface;
+            use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
+            class EntityAnalyticsSubscriber implements EventSubscriberInterface {
+
+              protected $routeMatch;
+
+              public static function getSubscribedEvents() {
+                return [
+                  'ga.collect' => [
+                    ['onCollect'],
+                  ],
+                ];
+              }
+
+              public function __construct(RouteMatchInterface $routeMatch) {
+                $this->routeMatch = $routeMatch;
+              }
+
+              public function onCollect(CollectEvent $event) {
+                if (($node = $this->routeMatch->getParameter('node'))) {
+                  $this->applyAttributesFromNode($event, $node);
+                }
+                elseif (($term = $this->routeMatch->getParameter('taxonomy_term'))) {
+                  $this->applyAttributesFromTaxonomyTerm($event, $term);
+                }
+              }
+
+              protected function applyAttributesFromNode(CollectEvent $event, NodeInterface $node) {
+                if (!empty($node->field_category[0]->entity)) {
+                  $category = $node->field_category[0]->entity->name->value;
+                  $event->addCommand(new SetDimension(1, $category));
+                }
+              }
+
+              protected function applyAttributesFromTaxonomyTerm(CollectEvent $event, TermInterface $term) {
+                $event->addCommand(new SetDimension(1, $term->name->value));
+              }
+            }
+          </code></pre>
+          <figcaption class="path">/src/EventSubscriber/EntityAnalyticsSubscriber.php</figcaption>
+        </figure>
+      </section>
+    </section>
+
+
+    <!-- TODO Exceptions? -->
+
+    <!-- Forms -->
+    <section>
+      <figure class="code">
+        <pre><code class="lang-php">
+          namespace Drupal\ga\Form;
+
+          use Drupal\Core\Form\ConfigFormBase;
+          use Drupal\Core\Form\FormStateInterface;
+
+          class AdminSettingsForm extends ConfigFormBase {
+
+            public function getFormId() {
+              return 'ga_admin_settings';
+            }
+
+            protected function getEditableConfigNames() {
+              return ['ga.settings'];
+            }
+
+            public function buildForm(array $form, FormStateInterface $form_state) {
+              $config = $this->config('ga.settings');
+
+              $form['tracking_id'] = [
+                '#type' => 'textfield',
+                '#title' => $this->t('Web Property Tracking ID'),
+                '#default_value' => $config->get('tracking_id'),
+              ];
+
+              return parent::buildForm($form, $form_state);
+            }
+
+            public function validateForm(array &$form, FormStateInterface $form_state) {
+              parent::validateForm($form, $form_state);
+
+              $property = $form_state->getValue('tracking_id');
+              if (!empty($property) && !preg_match('/^UA-\d+-\d+$/', $property)) {
+                $form_state->setErrorByName(
+                  'tracking_id',
+                  $this->t('The provided Tracking ID is not valid.')
+                );
+              }
+            }
+
+            public function submitForm(array &$form, FormStateInterface $form_state) {
+              $this->config('ga.settings')
+                ->set('tracking_id', $form_state->getValue('tracking_id'))
+                ->save();
+
+              parent::submitForm($form, $form_state);
+            }
+
+          }
+        </code></pre>
+        <figcaption class="path">/src/Form/AdminSettingsForm.php</figcaption>
+      </figure>
+    </section>
+
+    <!-- Unit Testing -->
+    <section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\Tests\ga\Unit\AnalyticsCommand;
+
+            use Drupal\ga\AnalyticsCommand\Create;
+            use Drupal\Tests\UnitTestCase;
+
+            class CreateTest extends UnitTestCase {
+
+              public function testDefaultPriority() {
+                $command = new Create('UA-12345678-1');
+
+                $this->assertEquals(300, $command->getPriority());
+              }
+
+              public function testBasicSettingCommands() {
+                $command = new Create('UA-12345678-1');
+
+                $this->assertEquals(['create', 'UA-12345678-1'], $command->getSettingCommand());
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/tests/src/Unit/AnalyticsCommand/CreateTest.php</figcaption>
+        </figure>
+      </section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\Tests\ga\Unit\Event;
+
+            use Drupal\ga\Event\CollectEvent;
+            use Drupal\Tests\UnitTestCase;
+
+            class CollectEventTest extends UnitTestCase {
+
+              private $event;
+
+              public function setUp() {
+                parent::setUp();
+
+                $this->event = new CollectEvent();
+              }
+
+              public function testEmptyCollection() {
+                $result = $this->event->getDrupalSettingCommands();
+                $this->assertEquals([], $result);
+              }
+
+              public function testCreateSend() {
+                $this->event->addCommand(new Create('UA-12345678-1'));
+                $this->event->addCommand(new Pageview());
+
+                $result = $this->event->getDrupalSettingCommands();
+                $this->assertEquals(
+                  [['create', 'UA-12345678-1'], ['send', 'pageview']],
+                  $result
+                );
+              }
+
+              public function testSendCreate() {
+                $this->event->addCommand(new Pageview());
+                $this->event->addCommand(new Create('UA-12345678-1'));
+
+                $result = $this->event->getDrupalSettingCommands();
+                $this->assertEquals(
+                  [['create', 'UA-12345678-1'], ['send', 'pageview']],
+                  $result
+                );
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/tests/src/Unit/AnalyticsCommand/CreateTest.php</figcaption>
+        </figure>
+      </section>
+      <section data-background-image="images/testing_select.png"></section>
+      <section data-background-image="images/testing_batch.png"></section>
+      <section>
+        <figure class="code">
+          <pre><code class="lang-bash">
+            $ vendor/bin/phpunit --configuration core/phpunit.xml modules/gacsp
+            Testing started at 11:33 PM ...
+            PHPUnit 4.8.26 by Sebastian Bergmann and contributors.
+
+            Time: 11.66 seconds, Memory: 6.00MB
+
+            OK (71 tests, 117 assertions)
+          </code></pre>
+        </figure>
+      </section>
     </section>
   </div>
 </div>
@@ -74,7 +1029,15 @@
   Reveal.initialize({
     width: 1280,
     height: 720,
+    center: false,
+    transition: 'fade',
     history: true,
+
+    // Arrow keys progress through sub-slides
+    keyboard: {
+      39: 'next', // right key
+      37: 'prev'  // left key
+    },
 
     // More info https://github.com/hakimel/reveal.js#dependencies
     dependencies: [
@@ -84,6 +1047,23 @@
       {
         src: 'plugin/highlight/highlight.js',
         async: true,
+        condition: function () {
+          // Trim whitespace from code blocks, and prevent HTML escaping by default.
+          // This must be done before the plugin is loaded.
+          Array.prototype.forEach.call(
+            document.querySelectorAll('pre code'),
+            function (element) {
+              if (! element.hasAttribute('data-notrim')) {
+                element.setAttribute('data-trim', '');
+              }
+              if (! element.hasAttribute('data-escape')) {
+                element.setAttribute('data-noescape', '');
+              }
+            }
+          );
+
+          return true;
+        },
         callback: function () {
           hljs.initHighlightingOnLoad();
         }
