@@ -1,37 +1,6 @@
-.reveal .slides > section[data-transition=slide-reverse].past,
-.reveal .slides > section[data-transition~=slide-reverse-out].past,
-.reveal.slide .slides > section:not([data-transition]).past {
-  -webkit-transform: translate(150%, 0);
-  transform: translate(150%, 0); }
-
-.reveal .slides > section[data-transition=slide-reverse].future,
-.reveal .slides > section[data-transition~=slide-reverse-in].future,
-.reveal.slide .slides > section:not([data-transition]).future {
-  -webkit-transform: translate(-150%, 0);
-  transform: translate(-150%, 0); }
-
-.reveal .slides > section > section[data-transition=slide-reverse].past,
-.reveal .slides > section > section[data-transition~=slide-reverse-out].past,
-.reveal.slide .slides > section > section:not([data-transition]).past {
-  -webkit-transform: translate(0, 150%);
-  transform: translate(0, 150%); }
-
-.reveal .slides > section > section[data-transition=slide-reverse].future,
-.reveal .slides > section > section[data-transition~=slide-reverse-in].future,
-.reveal.slide .slides > section > section:not([data-transition]).future {
-  -webkit-transform: translate(0, -150%);
-  transform: translate(0, -150%); }
-
-
-.reveal h1,
-.reveal h2,
-.reveal h3,
-.reveal h4,
-.reveal h5,
-.reveal h6 {
-  text-transform: none;
-}
-
+/*******************************************************************************
+ * Intro
+ ******************************************************************************/
 
 #about aside {
   color: #000;
@@ -119,4 +88,25 @@
 #myplanet .locations img {
   width: 12%;
   height: 12%;
+}
+
+#drupal-console .logo {
+  display: block;
+  width: 400px;
+  margin: auto;
+}
+
+#data-heart-code .emoji {
+  vertical-align: middle;
+}
+
+/*******************************************************************************
+ * Namespaces
+ ******************************************************************************/
+
+#namespace-path .namespace,
+#namespace-path .path {
+  display: block;
+  font-size: 1.5em;
+  margin-top: 1em;
 }

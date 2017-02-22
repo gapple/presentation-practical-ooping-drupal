@@ -1,0 +1,150 @@
+/*******************************************************************************
+ * TRANSITIONS
+ ******************************************************************************/
+.reveal .slides > section[data-transition=slide-reverse].past,
+.reveal .slides > section[data-transition~=slide-reverse-out].past,
+.reveal.slide-reverse .slides > section:not([data-transition]).past {
+  -webkit-transform: translate(150%, 0);
+  transform: translate(150%, 0); }
+
+.reveal .slides > section[data-transition=slide-reverse].future,
+.reveal .slides > section[data-transition~=slide-reverse-in].future,
+.reveal.slide-reverse .slides > section:not([data-transition]).future {
+  -webkit-transform: translate(-150%, 0);
+  transform: translate(-150%, 0); }
+
+.reveal .slides > section > section[data-transition=slide-reverse].past,
+.reveal .slides > section > section[data-transition~=slide-reverse-out].past,
+.reveal.slide-reverse .slides > section > section:not([data-transition]).past {
+  -webkit-transform: translate(0, 150%);
+  transform: translate(0, 150%); }
+
+.reveal .slides > section > section[data-transition=slide-reverse].future,
+.reveal .slides > section > section[data-transition~=slide-reverse-in].future,
+.reveal.slide-reverse .slides > section > section:not([data-transition]).future {
+  -webkit-transform: translate(0, -150%);
+  transform: translate(0, -150%); }
+
+/*******************************************************************************
+ * TEXT
+ ******************************************************************************/
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  text-transform: none;
+}
+
+ul.paths {
+  font-family: monospace;
+  list-style-type: none;
+  margin-left: 2ex;
+}
+ul.paths li::before {
+  content: '‐';
+  display: inline-block;
+  position: relative;
+  left: -2ex;
+  width: 2ex;
+  margin-right: -2ex;
+  opacity: 0.3;
+}
+ul.paths ul,
+ul.paths ul ul {
+  list-style-type: none;
+}
+ul.paths ul li::before {
+  content: '└';
+}
+
+/*******************************************************************************
+ * IMAGES
+ ******************************************************************************/
+.reveal section img {
+  margin: 15px 0px;
+  background: none;
+  border: 0;
+  box-shadow: none;
+}
+.reveal a img {
+  -webkit-transition: all .15s linear;
+  -moz-transition: all .15s linear;
+  transition: all .15s linear; }
+
+.reveal a:hover img {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: #268bd2;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.55); }
+
+
+/*******************************************************************************
+ * Code Segments
+ ******************************************************************************/
+pre code.lang-php::before {
+  content: "<?php";
+  position: absolute;
+  top: -1.5em;
+  margin-bottom: -1.5em;
+  display: inline-block;
+  color: rgba(127, 159, 127, 0.5);
+}
+
+.reveal pre code {
+  box-sizing: border-box;
+  padding: 1ex;
+  /* (presentation height) - (presentation margin) - (slide padding) - (pre margin) - (figcaption height) */
+  max-height: calc(720px - (720px * .04) - 20px - 20px - 1.3rem);
+}
+figure.code figcaption {
+  box-sizing: border-box;
+  margin: 0 auto -20px;
+  padding: 10px 2ex;
+  width: 90%;
+  font-size: 0.875rem;
+  border: 2px solid #3f3f3f;
+  border-bottom-width: 0;
+  background-color: #333;
+  text-align: left;
+}
+figure.code pre + figcaption {
+  border-top-width: 0;
+  border-bottom-width: 2px;
+  margin-top: -20px;
+  margin-bottom: 0;
+}
+figure.code figcaption.path {
+  font-family: monospace;
+}
+
+.reveal code mark {
+  color: inherit;
+  box-sizing: border-box;
+}
+/* non-highlight fragments will be initially hidden */
+.reveal .slides section code mark.fragment {
+  background-color: transparent;
+  border: 1px solid transparent;
+  margin: -1px; /* Compensate for border width */
+}
+/* highlight fragments are visible but not outlined at start */
+.reveal .slides section code mark.fragment[class*=highlight] {
+  opacity: 1;
+  visibility: inherit;
+}
+/* Generic marks are always outlined
+ * fragments are highlighted when made visible
+ */
+.reveal .slides section code mark:not(.fragment),
+.reveal .slides section code mark.fragment.visible {
+  background-color: rgba(255,255,0,0.1);
+  border: 1px solid rgba(255,255,0,0.3);
+  padding: 0.1em 0.2em;
+  margin: calc(-0.1em - 1px) calc(-0.2em - 1px); /* Compensate for padding and border */
+}
+/* highlight-current removes highlight when not current */
+.reveal .slides section code mark.fragment.highlight-current:not(.current-fragment) {
+  background-color: transparent;
+  border-color: transparent;
+}
