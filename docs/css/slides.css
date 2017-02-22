@@ -90,6 +90,13 @@
   height: 12%;
 }
 
+#source ul {
+  list-style: none;
+}
+#source li {
+  text-align: center;
+}
+
 #drupal-console .logo {
   display: block;
   width: 400px;
