@@ -2,7 +2,6 @@
 
 namespace Drupal\ga;
 
-use Drupal\ga\AnalyticsCommand\SettingGroupInterface;
 use Drupal\ga\AnalyticsCommand\SettingItemInterface;
 
 /**
@@ -15,9 +14,9 @@ trait PrioritySorterTrait {
   /**
    * Sort callback to order by priority.
    *
-   * @param SettingItemInterface|SettingGroupInterface $a
+   * @param SettingItemInterface $a
    *   First item.
-   * @param SettingItemInterface|SettingGroupInterface $b
+   * @param SettingItemInterface $b
    *   Second item.
    *
    * @return int
@@ -25,7 +24,7 @@ trait PrioritySorterTrait {
    *   argument is considered to be respectively less than, equal to, or greater
    *   than the second.
    */
-  public static function sortByPriority($a, $b) {
+  public static function sortByPriority(SettingItemInterface $a, SettingItemInterface $b) {
     return $b->getPriority() - $a->getPriority();
   }
 

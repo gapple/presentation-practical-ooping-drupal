@@ -6,7 +6,6 @@ namespace Drupal\ga\AnalyticsCommand;
  * Trait for storing and exposing priority value of an object.
  *
  * @see SettingItemInterface
- * @see SettingGroupInterface
  */
 trait PrioritizedTrait {
 
