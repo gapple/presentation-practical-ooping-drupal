@@ -918,10 +918,10 @@
             class EntityAnalyticsSubscriber implements EventSubscriberInterface {
 
               public function onCollect(CollectEvent $event) {
-                try {
+                <mark class="fragment highlight-current">try</mark> {
                   $event->addCommand(new SetMetric(1, 'string'));
                 }
-                catch (\InvalidArgumentException $exception) {
+                <mark class="fragment highlight-current">catch</mark> (\InvalidArgumentException $exception) {
                   $this->logger->error($exception->getMessage());
                 }
               }
