@@ -517,13 +517,11 @@
         </figure>
 
         <aside class="notes" data-markdown>
-          Interface is only declared on parent classes; children inherit
-          interfaces as well.
-
-          `extends` and `implements` can both be set on a class if child
-          implements interface that parent doesn't.
-
-          `implements` can have multiple values separated by commas.
+          - `implements` can have multiple values separated by commas.
+          - Interface is only declared on parent classes; children inherit
+            interfaces as well.
+          - `extends` and `implements` can both be set on a class if child
+            implements interface that parent doesn't (e.g. Node).
         </aside>
       </section>
     </section>
@@ -573,6 +571,11 @@
           </code></pre>
           <figcaption class="path">/src/AnalyticsCommand/Create.php</figcaption>
         </figure>
+
+        <aside class="notes" data-markdown>
+          - PHP will throw error if method not defined
+          - IDE will warn before then
+        </aside>
       </section>
       <section>
         <figure class="code">
