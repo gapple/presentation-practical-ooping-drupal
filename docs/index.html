@@ -887,8 +887,50 @@
       </section>
     </section>
 
+    <!-- Exceptions -->
+    <section>
+      <section id="exception-throw">
+        <figure class="code">
+          <pre><code class="lang-php">
+            namespace Drupal\ga\AnalyticsCommand;
 
-    <!-- TODO Exceptions? -->
+            class SetMetric extends Set {
+
+              public function __construct($index, $value, $priority = self::DEFAULT_PRIORITY) {
+                if (!is_int($index)) {
+                  <mark>throw</mark> new \InvalidArgumentException("Metric index must be a positive integer.");
+                }
+                if (!is_numeric($value)) {
+                  throw new \InvalidArgumentException("Metric value must be a number.");
+                }
+
+                parent::__construct('dimension' . $index, $value, $priority);
+              }
+
+            }
+          </code></pre>
+          <figcaption class="path">/src/AnalyticsCommand/SetMetric.php</figcaption>
+        </figure>
+      </section>
+      <section id="exception-catch">
+        <figure class="code">
+          <pre><code class="lang-php">
+            class EntityAnalyticsSubscriber implements EventSubscriberInterface {
+
+              public function onCollect(CollectEvent $event) {
+                try {
+                  $event->addCommand(new SetMetric(1, 'string'));
+                }
+                catch (\InvalidArgumentException $exception) {
+                  $this->logger->error($exception->getMessage());
+                }
+              }
+
+            }
+          </code></pre>
+        </figure>
+      </section>
+    </section>
 
     <!-- Forms -->
     <section>
