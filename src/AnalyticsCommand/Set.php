@@ -40,7 +40,7 @@ class Set implements SettingItemInterface {
   protected $trackerName;
 
   /**
-   * Create constructor.
+   * Set constructor.
    *
    * @param string $setting_key
    *   The setting key.
