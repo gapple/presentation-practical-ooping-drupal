@@ -1,0 +1,9 @@
+p {
+  margin: 0;
+}
+p:empty {
+  display: none;
+}
+ul {
+  margin-top: 0;
+}
