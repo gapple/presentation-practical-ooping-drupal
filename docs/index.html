@@ -328,6 +328,7 @@
       <section>
         <figure class="code">
           <pre><code class="lang-php">
+            &nbsp;
 
             $createInstance = <mark class="fragment highlight-current">new</mark> \Drupal\ga\AnalyticsCommand\Create('UA-12345678-1');
 
@@ -426,6 +427,10 @@
             //)
           </code></pre>
         </figure>
+
+        <aside class="notes" data-markdown>
+          - Don't need to `use` parent class
+        </aside>
       </section>
       <section>
         <figure class="code">
@@ -638,7 +643,7 @@
       </section>
     </section>
 
-    <!-- Statics & Constants-->
+    <!-- Constants & Statics -->
     <section>
       <section>
         <figure class="code">
@@ -649,11 +654,11 @@
 
               use PrioritizedTrait;
 
-              <mark>const</mark> DEFAULT_PRIORITY = 300;
+              <mark class="fragment highlight-current">const</mark> DEFAULT_PRIORITY = 300;
 
               protected $trackingId;
 
-              public function __construct($trackingId, $priority = <mark class="fragment highlight-current">static::</mark>DEFAULT_PRIORITY) {
+              public function __construct($trackingId, $priority = <mark class="fragment highlight-current">self::</mark>DEFAULT_PRIORITY) {
                 $this->trackingId = $trackingId;
                 $this->priority = $priority;
               }
@@ -699,21 +704,21 @@
                 $this->commands = [];
               }
 
-              public function addCommand(<mark class="fragment highlight">SettingItemInterface</mark> $item) {
+              public function addCommand(<mark class="fragment highlight-current" data-fragment-index="0">SettingItemInterface</mark> $item) {
                 $this->commands[] = $item;
               }
 
               public function getDrupalSettingCommands() {
                 usort(
                   $this->commands,
-                  function ($a, $b) {
+                    function (<mark class="fragment highlight-current" data-fragment-index="1">SettingItemInterface</mark> $a, <mark class="fragment highlight-current" data-fragment-index="1">SettingItemInterface</mark> $b) {
                     return $b->getPriority() - $a->getPriority();
                   }
                 );
 
                 return array_map(
-                  function ($item) {
-                    return $item->getSettingCommand()
+                  function (SettingItemInterface $item) {
+                    return <mark class="fragment highlight-current" data-fragment-index="1">$item->getSettingCommand()</mark>
                   },
                   $this->commands
                 );
@@ -725,18 +730,15 @@
         </figure>
 
         <aside class="notes" data-markdown>
-          Type Hinting
-          (Finally making use of interface here)
+          - Type Hinting (Finally making use of interface here)
 
-          Why are events better than a hooks?
-
-          Code organization; can break functionality into multiple methods more
-          easily than pseudo-private functions.
-
-          Loophole needed to provide more arguments to hooks (references within array).
-
-          More descriptive / multiple points of integration
-          Type hinting ensures correct data provided
+          - Why are events better than a hooks?
+            - Code organization; can break functionality into multiple methods
+              more easily than pseudo-private functions.
+            - Loophole needed to provide more arguments to hooks (references within array).
+            - More descriptive / multiple points of integration
+            - Type hinting ensures correct data provided
+            - Listener can stop others (event propagation)
         </aside>
       </section>
       <section>
@@ -815,12 +817,21 @@
             services:
               ga.default_command_subscriber:
                 class: Drupal\ga\EventSubscriber\DefaultCommandSubscriber
-                arguments: ['@config.factory']
+                  arguments: [<mark class="fragment highlight-current">'@config.factory'</mark>]
                 tags:
-                  - { name: event_subscriber }
+                  - { name: <mark class="fragment highlight-current">event_subscriber</mark> }
           </code></pre>
           <figcaption class="path">/ga.services.yml</figcaption>
         </figure>
+
+        <aside class="notes" data-markdown>
+          - arguments references other services
+            - searchable on api.drupal.org
+            - from `core.services.yml`
+          - tags
+            - checked after cache rebuild to find similar services
+            - e.g. event subscribers, plugins, cache contexts
+        </aside>
       </section>
       <section>
         <figure class="code">
@@ -1020,7 +1031,7 @@
       <section>
         <figure class="code">
           <pre><code class="lang-bash">
-            $ vendor/bin/phpunit --configuration core/phpunit.xml modules/gacsp
+            $ vendor/bin/phpunit --configuration core/phpunit.xml modules/ga
             Testing started at 11:33 PM ...
             PHPUnit 4.8.26 by Sebastian Bergmann and contributors.
 
