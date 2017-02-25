@@ -3,11 +3,12 @@
 namespace Drupal\ga\AnalyticsCommand\Linker;
 
 use Drupal\ga\AnalyticsCommand\PrioritizedTrait;
+use Drupal\ga\AnalyticsCommand\SettingItemInterface;
 
 /**
  * Class AutoLink.
  */
-class AutoLink {
+class AutoLink implements SettingItemInterface {
 
   use PrioritizedTrait;
 
