@@ -44,6 +44,7 @@ class CollectEvent extends Event {
    *   An array of commands for use in drupalSettings.
    */
   public function getDrupalSettingCommands() {
+    // sortByPriority is provided by PrioritySorterTrait.
     usort($this->commands, 'self::sortByPriority');
 
     return array_reduce($this->commands, 'self::settingReducer', []);
@@ -61,9 +62,7 @@ class CollectEvent extends Event {
    *   An array of commands formatted for JSON encoding.
    */
   private static function settingReducer(array $carry, SettingItemInterface $item) {
-
     $carry[] = $item->getSettingCommand();
-
     return $carry;
   }
 
